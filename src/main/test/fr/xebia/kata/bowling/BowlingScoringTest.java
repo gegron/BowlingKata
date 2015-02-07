@@ -27,46 +27,6 @@ public class BowlingScoringTest {
         assertThat(bowlingScoring.computeScore()).isEqualTo(5);
     }
 
-//    @Test
-//    public void should_add_spare_on_three_frame() {
-//        // Given
-//        BowlingScoring bowlingScoring = new BowlingScoring();
-//        bowlingScoring.addFalledPin(1);
-//        bowlingScoring.addFalledPin(4);
-//        bowlingScoring.addFalledPin(4);
-//        bowlingScoring.addFalledPin(5);
-//        bowlingScoring.addFalledPin(6);
-//        bowlingScoring.addFalledPin(4);
-//        bowlingScoring.addFalledPin(5);
-//
-//        // When
-//        Integer score = bowlingScoring.computeScore();
-//
-//        // Then
-//        assertThat(score).isEqualTo(29);
-//    }
-
-//    @Test
-//    public void should_add_spare_on_fourth_frame() {
-//        // Given
-//        BowlingScoring bowlingScoring = new BowlingScoring();
-//        bowlingScoring.addFalledPin(1);
-//        bowlingScoring.addFalledPin(4);
-//        bowlingScoring.addFalledPin(4);
-//        bowlingScoring.addFalledPin(5);
-//        bowlingScoring.addFalledPin(6);
-//        bowlingScoring.addFalledPin(4);
-//        bowlingScoring.addFalledPin(5);
-//        bowlingScoring.addFalledPin(5);
-//        bowlingScoring.addFalledPin(10);
-//
-//        // When
-//        Integer score = bowlingScoring.computeScore();
-//
-//        // Then
-//        assertThat(score).isEqualTo(49);
-//    }
-
     @Test
     public void should_check_when_only_one_pin_each_step() {
         // Given
@@ -82,7 +42,7 @@ public class BowlingScoringTest {
         // Then
         assertThat(score).isEqualTo(20);
     }
-    
+
     @Test
     public void should_check_when_only_spare() {
         // Given
@@ -124,7 +84,5 @@ public class BowlingScoringTest {
         assertThat(score).isEqualTo(300);
     }
 
-    
-    
 
 }

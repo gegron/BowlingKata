@@ -1,87 +1,66 @@
 package fr.xebia.kata.bowling;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class BowlingScoring {
 
-    private List<Throw> throwList = new ArrayList<>();
+    private Throw currentThrow;
 
-    private Integer currentThrowIndex;
+    private Throw firstThrow;
 
     public BowlingScoring() {
-        for (int i = 0; i < 22; i++) {
-            throwList.add(new Throw());
-        }
+        this.currentThrow = this.firstThrow = new Throw(1);
 
-        currentThrowIndex = 0;
+        // Init list
+        Throw previous = currentThrow;
+
+        for (int i = 1; i < 21; i++) {
+            Throw current = new Throw(Math.min(i / 2 + 1, 10));
+
+            current.addPrevious(previous);
+            previous = current;
+        }
     }
 
     public void addFalledPin(Integer count) {
-        Throw currentThrow = retrieveCurrentThrow();
+        currentThrow.setScore(count);
 
-        if (isFirstThrowOfFrame()) {
-            currentThrow.setScore(count);
+        if (currentThrow.isFirstThrowOfFrame()) {
 
-            if (count == 10 && isNotLastFrame()) {
-                retrieveNextNextThrow().coeff += retrieveNextThrow().coeff;
-                retrieveNextNextNextThrow().coeff++;
+            if (isAStrike(count)) {
+                currentThrow.next.next.coeff += currentThrow.next.coeff;
+                currentThrow.next.next.next.coeff++;
+                currentThrow.next.coeff = 0;
 
-                retrieveNextThrow().coeff = 0;
-
-                currentThrowIndex++;
+                currentThrow = currentThrow.next;
             }
         }
         else {
-            currentThrow.setScore(count);
-
-            // SPARE
-            if (retrievePreviousThrow().getScore() + currentThrow.getScore() == 10 && isNotLastFrame()) {
-                retrieveNextThrow().coeff ++;
+            if (isASpare()) {
+                currentThrow.next.coeff++;
             }
         }
 
-        currentThrowIndex++;
+        currentThrow = currentThrow.next;
     }
 
-    private boolean isNotLastFrame() {
-        return currentThrowIndex < 18;
+    private boolean isAStrike(Integer count) {
+        return count == 10 && !currentThrow.isLastFrame();
     }
 
-    private boolean isFirstThrowOfFrame() {
-        return currentThrowIndex % 2 == 0;
-    }
-
-    private Throw retrieveCurrentThrow() {
-        return throwList.get(currentThrowIndex);
-    }
-
-    private Throw retrievePreviousThrow() {
-        return throwList.get(currentThrowIndex - 1);
-    }
-
-    private Throw retrieveNextThrow() {
-        return throwList.get(currentThrowIndex + 1);
-    }
-
-    private Throw retrieveNextNextThrow() {
-        return throwList.get(currentThrowIndex + 2);
-    }
-
-    private Throw retrieveNextNextNextThrow() {
-        return throwList.get(currentThrowIndex + 3);
+    private boolean isASpare() {
+        return currentThrow.previous.getScore() + currentThrow.getScore() == 10 && !currentThrow.isLastFrame();
     }
 
     public Integer computeScore() {
         Integer score = 0;
 
-        for (Throw currentThrow : throwList) {
-            score += currentThrow.computeTotal();
+        Throw current = firstThrow;
+
+        while (current != null) {
+            score += current.computeTotal();
+            current = current.next;
         }
 
         return score;
     }
-
-
 
 }

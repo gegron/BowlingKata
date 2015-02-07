@@ -5,53 +5,83 @@ import java.util.List;
 
 public class BowlingScoring {
 
-    private List<Frame> frames;
+    private List<Throw> throwList = new ArrayList<>();
+
+    private Integer currentThrowIndex;
 
     public BowlingScoring() {
-        this.frames = new ArrayList<>();
+        for (int i = 0; i < 22; i++) {
+            throwList.add(new Throw());
+        }
+
+        currentThrowIndex = 0;
     }
 
-    public void addFalledSpin(Integer count) {
-        if (frames.isEmpty()) {
-            addNewFrame(count);
+    public void addFalledPin(Integer count) {
+        Throw currentThrow = retrieveCurrentThrow();
+
+        if (isFirstThrowOfFrame()) {
+            currentThrow.setScore(count);
+
+            if (count == 10 && isNotLastFrame()) {
+                retrieveNextNextThrow().coeff += retrieveNextThrow().coeff;
+                retrieveNextNextNextThrow().coeff++;
+
+                retrieveNextThrow().coeff = 0;
+
+                currentThrowIndex++;
+            }
         }
         else {
-            Frame lastFrame = frames.get(frames.size() - 1);
+            currentThrow.setScore(count);
 
-            if (lastFrame.isCompleted()) {
-                addNewFrame(count);
-            }
-            else {
-                lastFrame.addSecondThrow(count);
+            // SPARE
+            if (retrievePreviousThrow().getScore() + currentThrow.getScore() == 10 && isNotLastFrame()) {
+                retrieveNextThrow().coeff ++;
             }
         }
+
+        currentThrowIndex++;
     }
 
-    private void addNewFrame(Integer count) {
-        this.frames.add(new Frame(count));
+    private boolean isNotLastFrame() {
+        return currentThrowIndex < 18;
+    }
+
+    private boolean isFirstThrowOfFrame() {
+        return currentThrowIndex % 2 == 0;
+    }
+
+    private Throw retrieveCurrentThrow() {
+        return throwList.get(currentThrowIndex);
+    }
+
+    private Throw retrievePreviousThrow() {
+        return throwList.get(currentThrowIndex - 1);
+    }
+
+    private Throw retrieveNextThrow() {
+        return throwList.get(currentThrowIndex + 1);
+    }
+
+    private Throw retrieveNextNextThrow() {
+        return throwList.get(currentThrowIndex + 2);
+    }
+
+    private Throw retrieveNextNextNextThrow() {
+        return throwList.get(currentThrowIndex + 3);
     }
 
     public Integer computeScore() {
-        Integer count = 0;
-        Frame lastFrame = null;
+        Integer score = 0;
 
-        for (Frame frame : frames) {
-            if (frame.isCompleted()) {
-                count += frame.getSum();
-
-                if (lastFrame != null && lastFrame.isSpare()) {
-                    count += frame.getFirstThrow();
-                }
-
-                lastFrame = frame;
-            }
-
-            if (frames.indexOf(frame) >= 10) {
-                count += frame.getFirstThrow();
-            }
+        for (Throw currentThrow : throwList) {
+            score += currentThrow.computeTotal();
         }
 
-        return count;
+        return score;
     }
+
+
 
 }

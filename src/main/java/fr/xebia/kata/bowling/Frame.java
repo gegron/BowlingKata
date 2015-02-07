@@ -1,8 +1,11 @@
 package fr.xebia.kata.bowling;
 
+import com.google.common.collect.Lists;
+
 public class Frame {
 
     private final static Integer STRIKE_VALUE = -1;
+    private final static Integer BONUS_VALUE = -2;
 
     private Integer firstThrow;
     private Integer secondThrow;
@@ -13,6 +16,13 @@ public class Frame {
         if (firstThrow == 10) {
             secondThrow = STRIKE_VALUE;
         }
+    }
+
+    public Frame makeBonusFrame(Integer firstThrow) {
+        Frame frame = new Frame(firstThrow);
+        frame.secondThrow = STRIKE_VALUE;
+
+        return frame;
     }
 
     public void addSecondThrow(Integer secondThrow) {
@@ -33,7 +43,7 @@ public class Frame {
     }
 
     public boolean isSpare() {
-        if (firstThrow != null && firstThrow != null) {
+        if (isCompleted()) {
             return firstThrow + secondThrow == 10;
         }
         else {
@@ -43,5 +53,18 @@ public class Frame {
 
     public boolean isStrike() {
         return STRIKE_VALUE.compareTo(secondThrow) == 0;
+    }
+
+    public boolean isCompleted() {
+        return firstThrow != null && secondThrow != null;
+    }
+
+    public Integer getSum() {
+        if (!isCompleted() || Lists.newArrayList(STRIKE_VALUE, BONUS_VALUE).contains(secondThrow)) {
+            return firstThrow;
+        }
+        else {
+            return firstThrow + secondThrow;
+        }
     }
 }
